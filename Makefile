@@ -31,5 +31,6 @@ cowan.o : cowan.f90
 #==================================================
 .PHONY: clean
 clean :
-	rm -f $(SRCDIR)*.o $(MODDIR)*.mod 
-	rm -f $(addprefix $(OUTDIR), $(PROGRAM) ) 
+	rm -f $(SRCDIR)*.o $(MODDIR)*.mod
+	rm -f $(addprefix $(OUTDIR), $(PROGRAM) )
+	rm -f *~ $(SRCDIR)*~
