@@ -34,7 +34,8 @@ PROGRAM cowan
   i = 2
   do while (i <= count)
      call GET_COMMAND_ARGUMENT(NUMBER=i, VALUE=arg, STATUS=stat)
-     if (arg == '-n') then
+     select case (arg)
+     case ('-n')
         i = i + 1
         call GET_COMMAND_ARGUMENT(NUMBER=i, VALUE=arg, STATUS=stat)
         if (stat /= 0) then
@@ -42,26 +43,35 @@ PROGRAM cowan
            write(*,*) usage
            call EXIT(1)
         end if
-        read(arg,*) num_water
-     else if (arg == '-r') then
+        read(arg,*, IOSTAT=stat) num_water
+        if (stat/=0) then
+           write(*,*) "Unable to read the value of argument -n, only INTEGER is allowed!"
+           call EXIT(1)
+        end if
+     case ('-r')
         i = i + 1
-        call GET_COMMAND_ARGUMENT(NUMBER=i, VALUE=arg, STATUS=sntat)
+        call GET_COMMAND_ARGUMENT(NUMBER=i, VALUE=arg, STATUS=stat)
         if (stat /= 0) then
            write(*,*) "Unable to read the value of argument -r"
            write(*,*) usage
            call EXIT(1)
         end if
-        read(arg,*) hydration_radius
-     else
+        read(arg,*, IOSTAT=stat) hydration_radius
+        if (stat/=0) then
+           write(*,*) "Unable to read the value of argument -r, a real number is needed!"
+           call EXIT(1)
+        end if
+     case default
         write(*,*) "Undefined argument: ", arg
         write(*,*) usage
         call EXIT(1)
-     end if
+     end select
      i = i + 1
   end do
 
-  write(*,*) "input filename: ", input_filename
-  write(*,"('number of water molecules: ',I5)") num_water
+  write(*,*) "input filename: ", TRIM(input_filename)
+  write(*,"(' number of water molecules: ',I5)") num_water
+  write(*,*) "hydration radius:", hydration_radius
   
   open(UNIT=input_fileid, FILE=input_filename, STATUS='OLD', IOSTAT=stat, ACTION='READ')
   if (stat /= 0) then
@@ -69,16 +79,14 @@ PROGRAM cowan
      call EXIT(1)
   end if
 
-  read(UNIT=input_fileid, *) !title line
-  read(UNIT=input_fileid, *) i, j, num_atoms
+  read(input_fileid, *) !title line
+  read(input_fileid, *) i, j, num_atoms
 
-  allocate()
+!  allocate()
   
-  read(UNIT=input_fileid, *) str_timestep, timestep
-  read(UNIT=input_fileid, *) !cell vector
-  read(UNIT=input_fileid, *) !cell vector
-  read(UNIT=input_fileid, *) !cell vector  
-
-  read(
+  read(input_fileid, *) str_timestep, timestep
+  read(input_fileid, *) !cell vector
+  read(input_fileid, *) !cell vector
+  read(input_fileid, *) !cell vector  
   
 END PROGRAM cowan
