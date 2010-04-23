@@ -6,13 +6,13 @@ PROGRAM cowan
   INTEGER, PARAMETER :: REQUIRED_NUM_PAR = 7
   INTEGER, PARAMETER :: input_fileid = 10
   CHARACTER(LEN=128) :: input_filename
-  INTEGER :: count, i, j, stat
+  INTEGER :: count, i, j, k, stat
   CHARACTER(LEN=128) :: command, usage, arg
   CHARACTER(LEN=8) :: str_timestep, atom_name
   INTEGER :: timestep, num_water, num_atoms, num_frames, init_timestep, delta_timestep, atom_index
   INTEGER :: init_OW_index
-  REAL(KIND=8) :: hydration_radius
-  REAL(KIND=8), DIMENSION(3) :: pos
+  REAL(KIND=8) :: hydration_radius, hydration_radius_square, dist_square
+  REAL(KIND=8), DIMENSION(3) :: pos_ion, pos_water
   LOGICAL, DIMENSION(:,:), ALLOCATABLE :: hydration_table
   
   !-- read parameters from command line arguments --!
@@ -91,6 +91,9 @@ PROGRAM cowan
   write(*,"(' number of water molecules: ',I5)") num_water
   write(*,*) "hydration radius:", hydration_radius
 
+  !square the hydration_radius for furthur comparison with the dist_square between water and ion
+  hydration_radius_square = hydration_radius * hydration_radius
+
   allocate(hydration_table(num_water,num_frames), STAT=stat)
   if (stat /=0) then
      write(*,*) "Error: failed to allocate hydration_table(num_water, num_frames)!"
@@ -134,25 +137,53 @@ PROGRAM cowan
      read(input_fileid, *) !cell vector
      read(input_fileid, *) !cell vector
 
-     !read NA+ position at current timestep
+     !read ion position at current timestep
      read(input_fileid, *, IOSTAT=stat) atom_name, atom_index
      if (stat /= 0) then
-        write(*,*) "Error: problem occurs while reading NA+ records at timestep:", timestep
+        write(*,*) "Error: problem occurs while reading ion records at timestep:", timestep
         call EXIT(1)
      end if
-     read(input_fileid, *, IOSTAT=stat) pos
+     read(input_fileid, *, IOSTAT=stat) pos_ion
      if (stat /= 0) then
-        write(*,*) "Error: problem occurs while reading NA+ position at timestep:", timestep
+        write(*,*) "Error: problem occurs while reading ion position at timestep:", timestep
         call EXIT(1)
      end if
 
-     !skip non-water atoms
+     !skip non-water atoms ()
      do j = 1, num_atoms - num_water*3 - 1
         read(input_fileid, *) !skip atom_name, atom_index
         read(input_fileid, *) !skip atom position
      end do
 
+     !read water molecule position and decide if it is inside the first hydration layer
      do j = 1, num_water
+        read(input_fileid, *, IOSTAT=stat) atom_name, atom_index
+        if (stat /= 0) then
+           write(*,*) "Error: problem occurs while reading water record at timestep:", timestep
+           call EXIT(1)
+        else if (atom_name /= 'OW' .or. atom_index /= init_OW_index + (j-1)*3) then
+           write(*,*) "Error: problem occurs while reading water record at timestep:", timestep
+           write(*,*) "       the OW index should be ", init_OW_index + (j-1)*3, &
+                & "but ", atom_index, " was read."
+           call EXIT(1)
+        else
+           read(input_fileid, *, IOSTAT=stat) pos_water
+           if (stat /= 0) then
+              write(*,*) "Error: problem occurs while reading water position at timestep:", timestep
+              call EXIT(1)
+           end if
+        end if
+
+        dist_square = 0.0
+        do k = 1, 3
+           dist_square = dist_square + (pos_water(k) - pos_ion(k))*(pos_water(k) - pos_ion(k))
+        end do
+        
+        if (dist_square <= hydration_radius_square) then
+           hydration_table(j, i) = .true.
+        else
+           hydration_table(j, i) = .false.
+        end if
      end do
   end do
 END PROGRAM cowan
