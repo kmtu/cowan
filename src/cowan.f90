@@ -6,11 +6,17 @@ PROGRAM cowan
   INTEGER, PARAMETER :: REQUIRED_NUM_PAR = 7
   INTEGER, PARAMETER :: input_fileid = 10
   CHARACTER(LEN=128) :: input_filename
+  INTEGER, PARAMETER :: output_fileid = 11
+  CHARACTER(LEN=128) :: output_filename
   INTEGER :: count, i, j, k, stat
   CHARACTER(LEN=128) :: command, usage, arg
+  CHARACTER(LEN=2) :: out_fmt
   CHARACTER(LEN=8) :: str_timestep, atom_name
+  CHARACTER, PARAMETER :: OW_IN = '*', OW_OUT = '_'
+  CHARACTER :: OW_state
+  CHARACTER(LEN=2), PARAMETER :: OW_name = 'OW'
   INTEGER :: timestep, num_water, num_atoms, num_frames, init_timestep, delta_timestep, atom_index
-  INTEGER :: init_OW_index
+  INTEGER :: init_OW_index, num_digits_atom_index
   REAL(KIND=8) :: hydration_radius, hydration_radius_square, dist_square
   REAL(KIND=8), DIMENSION(3) :: pos_ion, pos_water
   LOGICAL, DIMENSION(:,:), ALLOCATABLE :: hydration_table
@@ -110,7 +116,8 @@ PROGRAM cowan
   read(input_fileid, *) i, j, num_atoms
 
   init_OW_index = num_atoms - num_water*3 + 1
-  
+
+  ! start reading records of each timestep
   do i = 1, num_frames
      read(input_fileid, *, IOSTAT=stat) str_timestep, timestep
      if (i == 1) then
@@ -127,7 +134,8 @@ PROGRAM cowan
         delta_timestep = timestep - init_timestep
      else
         if (stat /= 0) then
-           write(*,*) "Error: problem occurs while reading timestep:", init_timestep+(i-1)*delta_timestep
+           write(*,*) "Error: problem occurs while reading timestep:", &
+                &init_timestep+(i-1)*delta_timestep
            call EXIT(1)
         end if
      end if
@@ -161,7 +169,7 @@ PROGRAM cowan
         if (stat /= 0) then
            write(*,*) "Error: problem occurs while reading water record at timestep:", timestep
            call EXIT(1)
-        else if (atom_name /= 'OW' .or. atom_index /= init_OW_index + (j-1)*3) then
+        else if (atom_name /= OW_name .or. atom_index /= init_OW_index + (j-1)*3) then
            write(*,*) "Error: problem occurs while reading water record at timestep:", timestep
            write(*,*) "       the OW index should be ", init_OW_index + (j-1)*3, &
                 & "but ", atom_index, " was read."
@@ -169,9 +177,13 @@ PROGRAM cowan
         else
            read(input_fileid, *, IOSTAT=stat) pos_water
            if (stat /= 0) then
-              write(*,*) "Error: problem occurs while reading water position at timestep:", timestep
+              write(*,*) "Error: problem occurs while reading water position at timestep:", &
+                   &timestep
               call EXIT(1)
            end if
+           do k = 1, 4
+              read(input_fileid, *) !omit the HW records
+           end do
         end if
 
         dist_square = 0.0
@@ -186,4 +198,49 @@ PROGRAM cowan
         end if
      end do
   end do
+
+  close(input_fileid)
+
+  ! output results
+  output_filename = TRIM(ADJUSTL(input_filename)) // ".cowan"
+  open(UNIT=output_fileid, FILE=output_filename, STATUS='REPLACE', IOSTAT=stat, ACTION='WRITE')
+  if (stat /= 0) then
+     write(*,*) "Error: unable to create file: ", output_filename
+     call EXIT(1)
+  end if
+
+  ! decide the max number of digits of timestep for output
+  ! plus 2 is the safest way (because 10000 may be 9999.999 in REAL format)
+!  max_num_timestep_digits = INT(LOG10(REAL(init_timestep + (num_frames-1)*delta_timestep))) + 2
+
+  ! decide the number of digits of atom index for output
+  ! plus 2 is the safest way (because 10000 may be 9999.999 in REAL format)
+  num_digits_atom_index = INT(LOG10(REAL(num_atoms))) + 2
+  
+  do i = 1, num_water
+     if (ANY(hydration_table(i,:))) then
+        do j = 0, num_frames
+           if (j == 0) then
+              write(out_fmt, "(I2)") num_digits_atom_index
+              write(output_fileid, "(I"//TRIM(ADJUSTL(out_fmt))//")", IOSTAT=stat, ADVANCE='NO') &
+                   & init_OW_index + (i-1)*3
+           else
+              if (hydration_table(i,j)) then
+                 OW_state = OW_IN
+              else
+                 OW_state = OW_OUT
+              end if
+
+              write(output_fileid, "(A1)", ADVANCE='NO') OW_state
+
+              if (j == num_frames) then
+                 write(output_fileid, *) ! newline
+              end if
+           end if
+        end do
+     end if
+  end do
+
+  deallocate(hydration_table)
+  close(output_fileid)
 END PROGRAM cowan
