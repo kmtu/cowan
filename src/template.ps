@@ -13,8 +13,10 @@
 /boundTop pageHeight marginTop sub def
 /boundLeft marginLeft def
 
-/numRecords 45 def
-/numFrames 100 def
+
+/numRecords         44 def
+/numFrames         50 def
+
 /recordHeight pageHeight 2 div numRecords div def
 
 /vertAxis boundLeft marginLeft add def
@@ -31,7 +33,7 @@ setfont
 
 /minVertTick vertAxis pageWidth 40 div add def
 /maxVertTick vertAxis2 pageWidth 40 div sub def
-/numVertTicks 10 def
+/numVertTicks 11 def
 /vertTickSpace maxVertTick minVertTick sub numVertTicks 1 sub div def
 
 /horiAxis1 boundTop numRecords 1 add recordHeight mul sub def
@@ -45,20 +47,19 @@ setfont
 /numHoriTicks maxHoriTickNum minHoriTickNum sub 1 add def
 /horiTickSpace maxHoriTick minHoriTick sub numHoriTicks 1 sub div def
 
-
-/dataPointSpace maxVertTick minVertTick sub numFrames 1 sub div def
+/dataPointSpace maxVertTick minVertTick sub numFrames div def
 
 /HSBoxHeight recordHeight 2 div def
 /HSBoxWidth dataPointSpace def
 /HSBox {
-	newpath
-	moveto
-	HSBoxWidth 2 div 0 rlineto
-	0 HSBoxHeight rlineto
-	HSBoxWidth neg 0 rlineto
-	0 HSBoxHeight neg rlineto
-	closepath
-	fill
+newpath
+moveto
+HSBoxWidth 2 div 0 rlineto
+0 HSBoxHeight rlineto
+HSBoxWidth neg 0 rlineto
+0 HSBoxHeight neg rlineto
+closepath
+fill
 } bind def
 
 /vertTickLength pageHeight 200 div def
@@ -174,11 +175,11 @@ stroke
 0 1 numVertTicks 1 sub {
   dup vertTickSpace mul minVertTick add horiAxis3 vertTick
   newpath
-  dup 1 add 20 mul
+  dup 2 numFrames mul numVertTicks 1 sub div mul
   dup exch 10 lt {pop /temp (0) def} {100 lt {/temp (00) def} {/temp (000) def} ifelse} ifelse
   dup vertTickSpace mul minVertTick add temp stringwidth pop 2 div sub
   horiAxis3 pageHeight 60 div sub moveto
-  1 add 20 mul 3 string cvs show
+  2 numFrames mul numVertTicks 1 sub div mul cvi 3 string cvs show
 } for
 
 
@@ -200,68 +201,784 @@ waterLabelFontSize scalefont
 setfont
 
 %draw water records
+
 %%%% Fortran loop starts
 newpath
-/order 1 def
+/order    1 def
 waterLabelAlign boundTop recordHeight order mul sub moveto
 (839) show
-minVertTick HSBoxWidth 0 mul add boundTop recordHeight order mul sub HSBox
-minVertTick HSBoxWidth 3 mul add boundTop recordHeight order mul sub HSBox
+
+minVertTick HSBoxWidth 46 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 47 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 48 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 49 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 50 mul add boundTop recordHeight order mul sub HSBox
 
 newpath
-/order 2 def
+/order    2 def
 waterLabelAlign boundTop recordHeight order mul sub moveto
-(1025) show
-minVertTick HSBoxWidth 4 mul add boundTop recordHeight order mul sub HSBox
-minVertTick HSBoxWidth 5 mul add boundTop recordHeight order mul sub HSBox
+(878) show
+
+minVertTick HSBoxWidth 50 mul add boundTop recordHeight order mul sub HSBox
 
 newpath
-/order 3 def
-waterLabelAlign boundTop recordHeight 3 mul sub moveto
-(1028) show
-minVertTick HSBoxWidth 4 mul add boundTop recordHeight order mul sub HSBox
-minVertTick HSBoxWidth 7 mul add boundTop recordHeight order mul sub HSBox
-%%%% Fortran loop ends
+/order    3 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(1556) show
 
+minVertTick HSBoxWidth 50 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order    4 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(1901) show
+
+minVertTick HSBoxWidth 39 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 40 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 41 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 42 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 43 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 44 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 45 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order    5 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(2018) show
+
+minVertTick HSBoxWidth 46 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 47 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 48 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 49 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order    6 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(2516) show
+
+minVertTick HSBoxWidth  3 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  5 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  6 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  7 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  8 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  9 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 10 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 11 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 12 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 13 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 14 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order    7 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(2810) show
+
+minVertTick HSBoxWidth 49 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 50 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order    8 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(3215) show
+
+minVertTick HSBoxWidth 48 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 49 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order    9 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(3287) show
+
+minVertTick HSBoxWidth 31 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 32 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 33 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 34 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 35 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 36 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 37 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 38 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   10 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(3335) show
+
+minVertTick HSBoxWidth 23 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 24 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 26 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 27 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 29 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 30 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 31 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 32 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 33 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 34 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   11 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(3392) show
+
+minVertTick HSBoxWidth 35 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 36 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 37 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 38 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   12 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(3395) show
+
+minVertTick HSBoxWidth 28 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   13 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(3413) show
+
+minVertTick HSBoxWidth 18 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 19 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 20 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 21 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   14 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(3434) show
+
+minVertTick HSBoxWidth 27 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 29 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 30 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 31 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 32 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   15 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(3449) show
+
+minVertTick HSBoxWidth 43 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   16 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(3494) show
+
+minVertTick HSBoxWidth 25 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 26 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 27 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 28 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 29 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 30 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 31 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 32 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 33 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 34 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 35 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 36 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 37 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 38 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 39 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 40 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 41 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 42 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 45 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 46 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 47 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 48 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 49 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   17 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(3524) show
+
+minVertTick HSBoxWidth 44 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 45 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 46 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 47 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 48 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 49 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   18 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(3527) show
+
+minVertTick HSBoxWidth 29 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 30 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   19 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(3557) show
+
+minVertTick HSBoxWidth 20 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 21 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 22 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 23 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 24 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 25 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 26 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   20 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(3560) show
+
+minVertTick HSBoxWidth 46 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 47 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 48 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   21 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(3602) show
+
+minVertTick HSBoxWidth 16 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 17 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 18 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 19 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   22 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(3605) show
+
+minVertTick HSBoxWidth 33 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 34 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 35 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 36 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 37 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 38 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 39 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 40 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   23 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(3623) show
+
+minVertTick HSBoxWidth 21 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   24 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(3716) show
+
+minVertTick HSBoxWidth 36 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 37 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 38 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 39 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 40 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   25 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(3719) show
+
+minVertTick HSBoxWidth 33 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 34 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 35 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 36 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 37 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 39 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 40 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 41 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 42 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 43 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 44 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   26 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(3743) show
+
+minVertTick HSBoxWidth 29 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 30 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 31 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 32 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 33 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   27 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(3773) show
+
+minVertTick HSBoxWidth 38 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 39 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 40 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 41 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 42 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 43 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 44 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 45 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   28 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(3812) show
+
+minVertTick HSBoxWidth 12 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 13 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 14 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 15 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 16 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 17 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 18 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 19 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 20 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 21 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 22 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 23 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 24 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 25 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 26 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 28 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   29 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(3827) show
+
+minVertTick HSBoxWidth  1 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  2 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  3 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  4 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   30 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(3908) show
+
+minVertTick HSBoxWidth 20 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   31 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(3983) show
+
+minVertTick HSBoxWidth  1 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   32 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(4034) show
+
+minVertTick HSBoxWidth  1 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  2 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   33 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(4037) show
+
+minVertTick HSBoxWidth 13 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 14 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 15 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   34 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(4049) show
+
+minVertTick HSBoxWidth  3 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  4 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  5 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  6 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  7 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  8 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  9 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 10 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 11 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 12 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 13 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 14 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 15 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   35 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(4130) show
+
+minVertTick HSBoxWidth  6 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  7 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  8 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  9 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 10 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 11 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   36 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(4187) show
+
+minVertTick HSBoxWidth 16 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 17 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 19 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 22 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 23 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 24 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 25 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   37 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(4358) show
+
+minVertTick HSBoxWidth  2 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  3 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  4 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  5 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  6 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  7 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  8 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  9 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 10 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 11 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 12 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 13 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 14 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 15 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   38 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(4367) show
+
+minVertTick HSBoxWidth 16 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 17 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 18 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 19 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 20 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 21 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 22 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 23 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 24 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 25 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 26 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 27 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 28 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   39 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(4385) show
+
+minVertTick HSBoxWidth  2 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  3 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  4 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  5 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  6 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  7 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  8 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  9 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 10 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   40 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(4397) show
+
+minVertTick HSBoxWidth  1 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  2 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  3 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  4 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  5 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  6 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  7 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  8 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth  9 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 10 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 11 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 12 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 13 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 14 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 15 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 16 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 17 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   41 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(4934) show
+
+minVertTick HSBoxWidth  1 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   42 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(5864) show
+
+minVertTick HSBoxWidth 41 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   43 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(5885) show
+
+minVertTick HSBoxWidth 15 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 16 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 17 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 18 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 19 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 20 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 21 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 22 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 23 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 24 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 25 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 26 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 27 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 28 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 29 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 30 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 31 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 32 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 33 mul add boundTop recordHeight order mul sub HSBox
+
+newpath
+/order   44 def
+waterLabelAlign boundTop recordHeight order mul sub moveto
+(5969) show
+
+minVertTick HSBoxWidth 41 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 42 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 43 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 44 mul add boundTop recordHeight order mul sub HSBox
+minVertTick HSBoxWidth 45 mul add boundTop recordHeight order mul sub HSBox
+
+%%%% Fortran loop ends
 
 %draw n
 gsave
 1 setlinejoin
 newpath
+
 %%%% Fortran loop starts
-/data 3 def
+/data  5 def
 /point data minHoriTickNum sub def
-minVertTick dataPointSpace 0 mul add minHoriTick horiTickSpace point mul add moveto
+minVertTick dataPointSpace     1 mul add minHoriTick horiTickSpace point mul add moveto
 
-/data 5 def
+/data  5 def
 /point data minHoriTickNum sub def
-minVertTick dataPointSpace 1 mul add minHoriTick horiTickSpace point mul add lineto
+minVertTick dataPointSpace     2 mul add minHoriTick horiTickSpace point mul add lineto
 
-/data 4 def
+/data  6 def
 /point data minHoriTickNum sub def
-minVertTick dataPointSpace 2 mul add minHoriTick horiTickSpace point mul add lineto
+minVertTick dataPointSpace     3 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace     4 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace     5 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace     6 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace     7 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace     8 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace     9 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    10 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    11 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    12 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    13 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    14 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    15 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    16 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    17 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    18 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    19 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    20 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    21 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    22 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    23 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    24 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    25 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    26 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    27 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    28 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    29 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    30 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    31 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    32 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  7 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    33 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    34 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    35 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    36 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    37 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    38 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    39 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    40 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    41 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    42 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    43 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    44 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    45 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    46 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    47 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    48 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    49 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  4 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    50 mul add minHoriTick horiTickSpace point mul add lineto
+
 %%%% Fortran loop ends
+
 stroke
 grestore
-
 
 %draw tube top and bottom line
 /topLimit horiAxis2 pageHeight 60 div sub def
 /botLimit horiAxis3 def
 /graphRange topLimit botLimit sub def
 
-/dataTopLimit 27 def
-/dataBotLimit -27 def
+/dataTopLimit  28.45 def
+/dataBotLimit -28.45 def
 /dataRange dataTopLimit dataBotLimit sub def
 
 /changeToGraph {
   dataBotLimit sub dataRange div graphRange mul botLimit add
 } def
 
-/dataTubeTop 13 def
-/dataTubeBot -13 def
+/dataTubeTop  12.75 def
+/dataTubeBot -12.75 def
 /tubeTopAxis dataTubeTop changeToGraph def
 /tubeBotAxis dataTubeBot changeToGraph def
+
 gsave
   0 setlinecap
   [dataPointSpace 2 div dup 1.5 mul ] 0 setdash
@@ -275,14 +992,14 @@ gsave
   stroke
 grestore
 %draw labels
-/MyHelvetica findfont
+/Helvetica findfont
 generalFontSize scalefont
 setfont
 newpath
-/label dataTubeTop 3 string cvs def
+/label dataTubeTop 6 string cvs def
 vertAxis label stringwidth pop (0) stringwidth pop 2 div add sub tubeTopAxis pageHeight 200 div sub moveto
 label show
-/label dataTubeBot 3 string cvs def
+/label dataTubeBot 6 string cvs def
 vertAxis label stringwidth pop (0) stringwidth pop 2 div add sub tubeBotAxis pageHeight 200 div sub moveto
 label show
 /label (AA) def
@@ -293,16 +1010,162 @@ label show
 gsave
 1 setlinejoin
 newpath
+
 %%%% Fortran loop starts
-/data 19 def
-minVertTick dataPointSpace 0 mul add data changeToGraph moveto
-/data 17 def
-minVertTick dataPointSpace 1 mul add data changeToGraph lineto
-/data 16 def
-minVertTick dataPointSpace 2 mul add data changeToGraph lineto
+/data   0.197460067289E+02 def
+minVertTick dataPointSpace     1 mul add data changeToGraph moveto
+
+/data   0.180598663566E+02 def
+minVertTick dataPointSpace     2 mul add data changeToGraph lineto
+
+/data   0.172882273758E+02 def
+minVertTick dataPointSpace     3 mul add data changeToGraph lineto
+
+/data   0.165334482880E+02 def
+minVertTick dataPointSpace     4 mul add data changeToGraph lineto
+
+/data   0.159417175326E+02 def
+minVertTick dataPointSpace     5 mul add data changeToGraph lineto
+
+/data   0.161322936572E+02 def
+minVertTick dataPointSpace     6 mul add data changeToGraph lineto
+
+/data   0.163948196652E+02 def
+minVertTick dataPointSpace     7 mul add data changeToGraph lineto
+
+/data   0.156969257700E+02 def
+minVertTick dataPointSpace     8 mul add data changeToGraph lineto
+
+/data   0.159348706957E+02 def
+minVertTick dataPointSpace     9 mul add data changeToGraph lineto
+
+/data   0.154425609765E+02 def
+minVertTick dataPointSpace    10 mul add data changeToGraph lineto
+
+/data   0.138650975211E+02 def
+minVertTick dataPointSpace    11 mul add data changeToGraph lineto
+
+/data   0.138626335506E+02 def
+minVertTick dataPointSpace    12 mul add data changeToGraph lineto
+
+/data   0.114299779766E+02 def
+minVertTick dataPointSpace    13 mul add data changeToGraph lineto
+
+/data   0.111552274745E+02 def
+minVertTick dataPointSpace    14 mul add data changeToGraph lineto
+
+/data   0.771514250111E+01 def
+minVertTick dataPointSpace    15 mul add data changeToGraph lineto
+
+/data   0.531039250565E+01 def
+minVertTick dataPointSpace    16 mul add data changeToGraph lineto
+
+/data   0.579360690206E+01 def
+minVertTick dataPointSpace    17 mul add data changeToGraph lineto
+
+/data   0.408918402393E+01 def
+minVertTick dataPointSpace    18 mul add data changeToGraph lineto
+
+/data   0.288929465985E+01 def
+minVertTick dataPointSpace    19 mul add data changeToGraph lineto
+
+/data   0.355324911995E+01 def
+minVertTick dataPointSpace    20 mul add data changeToGraph lineto
+
+/data   0.252123859496E+01 def
+minVertTick dataPointSpace    21 mul add data changeToGraph lineto
+
+/data   0.208002629518E+01 def
+minVertTick dataPointSpace    22 mul add data changeToGraph lineto
+
+/data   0.815876428961E+00 def
+minVertTick dataPointSpace    23 mul add data changeToGraph lineto
+
+/data   0.130102775166E+01 def
+minVertTick dataPointSpace    24 mul add data changeToGraph lineto
+
+/data  -0.122497885838E+01 def
+minVertTick dataPointSpace    25 mul add data changeToGraph lineto
+
+/data  -0.183545129509E+01 def
+minVertTick dataPointSpace    26 mul add data changeToGraph lineto
+
+/data  -0.518277006594E+01 def
+minVertTick dataPointSpace    27 mul add data changeToGraph lineto
+
+/data  -0.530988990903E+01 def
+minVertTick dataPointSpace    28 mul add data changeToGraph lineto
+
+/data  -0.795652570786E+01 def
+minVertTick dataPointSpace    29 mul add data changeToGraph lineto
+
+/data  -0.749506059773E+01 def
+minVertTick dataPointSpace    30 mul add data changeToGraph lineto
+
+/data  -0.101358691211E+02 def
+minVertTick dataPointSpace    31 mul add data changeToGraph lineto
+
+/data  -0.110684153590E+02 def
+minVertTick dataPointSpace    32 mul add data changeToGraph lineto
+
+/data  -0.127452927975E+02 def
+minVertTick dataPointSpace    33 mul add data changeToGraph lineto
+
+/data  -0.145930651348E+02 def
+minVertTick dataPointSpace    34 mul add data changeToGraph lineto
+
+/data  -0.146446016333E+02 def
+minVertTick dataPointSpace    35 mul add data changeToGraph lineto
+
+/data  -0.161474504643E+02 def
+minVertTick dataPointSpace    36 mul add data changeToGraph lineto
+
+/data  -0.156936027390E+02 def
+minVertTick dataPointSpace    37 mul add data changeToGraph lineto
+
+/data  -0.157313755981E+02 def
+minVertTick dataPointSpace    38 mul add data changeToGraph lineto
+
+/data  -0.177229068212E+02 def
+minVertTick dataPointSpace    39 mul add data changeToGraph lineto
+
+/data  -0.183250907435E+02 def
+minVertTick dataPointSpace    40 mul add data changeToGraph lineto
+
+/data  -0.185870480714E+02 def
+minVertTick dataPointSpace    41 mul add data changeToGraph lineto
+
+/data  -0.187072652462E+02 def
+minVertTick dataPointSpace    42 mul add data changeToGraph lineto
+
+/data  -0.193341985054E+02 def
+minVertTick dataPointSpace    43 mul add data changeToGraph lineto
+
+/data  -0.190461027762E+02 def
+minVertTick dataPointSpace    44 mul add data changeToGraph lineto
+
+/data  -0.194358989798E+02 def
+minVertTick dataPointSpace    45 mul add data changeToGraph lineto
+
+/data  -0.218309898383E+02 def
+minVertTick dataPointSpace    46 mul add data changeToGraph lineto
+
+/data  -0.237132536286E+02 def
+minVertTick dataPointSpace    47 mul add data changeToGraph lineto
+
+/data  -0.231756075540E+02 def
+minVertTick dataPointSpace    48 mul add data changeToGraph lineto
+
+/data  -0.241376348705E+02 def
+minVertTick dataPointSpace    49 mul add data changeToGraph lineto
+
+/data  -0.271011236207E+02 def
+minVertTick dataPointSpace    50 mul add data changeToGraph lineto
+
 %%%% Fortran loop ends
+
 stroke
 grestore
 
-
 showpage
+

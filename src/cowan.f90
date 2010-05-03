@@ -330,7 +330,7 @@ CONTAINS
          &''/&
          &'/minVertTick vertAxis pageWidth 40 div add def'/&
          &'/maxVertTick vertAxis2 pageWidth 40 div sub def'/&
-         &'/numVertTicks 10 def'/&
+         &'/numVertTicks 11 def'/&
          &'/vertTickSpace maxVertTick minVertTick sub numVertTicks 1 sub div def'/&
          &''/&
          &'/horiAxis1 boundTop numRecords 1 add recordHeight mul sub def'/&
@@ -344,8 +344,7 @@ CONTAINS
          &'/numHoriTicks maxHoriTickNum minHoriTickNum sub 1 add def'/&
          &'/horiTickSpace maxHoriTick minHoriTick sub numHoriTicks 1 sub div def'/&
          &''/&
-         &''/&
-         &'/dataPointSpace maxVertTick minVertTick sub numFrames 1 sub div def'/&
+         &'/dataPointSpace maxVertTick minVertTick sub numFrames div def'/&
          &''/&
          &'/HSBoxHeight recordHeight 2 div def'/&
          &'/HSBoxWidth dataPointSpace def'/&
@@ -473,11 +472,11 @@ CONTAINS
          &'0 1 numVertTicks 1 sub {'/&
          &'  dup vertTickSpace mul minVertTick add horiAxis3 vertTick'/&
          &'  newpath'/&
-         &'  dup 1 add 20 mul'/&
+         &'  dup 2 numFrames mul numVertTicks 1 sub div mul'/&
          &'  dup exch 10 lt {pop /temp (0) def} {100 lt {/temp (00) def} {/temp (000) def} ifelse} ifelse'/&
          &'  dup vertTickSpace mul minVertTick add temp stringwidth pop 2 div sub'/&
          &'  horiAxis3 pageHeight 60 div sub moveto'/&
-         &'  1 add 20 mul 3 string cvs show'/&
+         &'  2 numFrames mul numVertTicks 1 sub div mul cvi 3 string cvs show'/&
          &'} for'/&
          &''/&
          &''/&
@@ -516,7 +515,7 @@ CONTAINS
           do j = 1, num_frames
              if (hydration_table(i,j)) then
                 write(ps_output_fileid, "('minVertTick HSBoxWidth ', I"//TRIM(ADJUSTL(out_fmt3))//&
-                     &",' mul add boundTop recordHeight order mul sub HSBox')") j-1
+                     &",' mul add boundTop recordHeight order mul sub HSBox')") j
              end if
           end do
           write(ps_output_fileid,*)
@@ -530,11 +529,11 @@ CONTAINS
          &'newpath'/&
          &)")
     write(ps_output_fileid, "('%%%% Fortran loop starts')")
-    do i = 0, num_frames-1
+    do i = 1, num_frames
        write(ps_output_fileid, "(&
             &'/data ', I2, ' def'/&
-            &'/point data minHoriTickNum sub def')") hydration_sum_table(i+1)
-       if (i == 0) then
+            &'/point data minHoriTickNum sub def')") hydration_sum_table(i)
+       if (i == 1) then
           write(ps_output_fileid, "(&
                &'minVertTick dataPointSpace ', I5, ' mul add minHoriTick horiTickSpace point mul add moveto'/&
                &)") i
@@ -603,17 +602,17 @@ CONTAINS
          &'newpath'/&
          &)")
     write(ps_output_fileid, "('%%%% Fortran loop starts')")
-    do i = 0, num_frames-1
-       if (i == 0) then
+    do i = 1, num_frames
+       if (i == 1) then
           write(ps_output_fileid, "(&
                &'/data ', e20.12, ' def'/&
                &'minVertTick dataPointSpace ', I5, ' mul add data changeToGraph moveto'/&
-               &)") pos_ion_table(i+1), i
+               &)") pos_ion_table(i), i
        else
           write(ps_output_fileid, "(&
                &'/data ', e20.12, ' def'/&
                &'minVertTick dataPointSpace ', I5, ' mul add data changeToGraph lineto'/&
-               &)") pos_ion_table(i+1), i
+               &)") pos_ion_table(i), i
        end if
     end do
     write(ps_output_fileid, "('%%%% Fortran loop ends'/)")
