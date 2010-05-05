@@ -3,7 +3,7 @@
 
 PROGRAM cowan
   IMPLICIT NONE
-  INTEGER, PARAMETER :: REQUIRED_NUM_PAR = 7
+  INTEGER, PARAMETER :: REQUIRED_NUM_PAR = 3
   INTEGER, PARAMETER :: input_fileid = 10
   CHARACTER(LEN=128) :: input_filename
   INTEGER, PARAMETER :: output_fileid = 11
@@ -15,7 +15,8 @@ PROGRAM cowan
   CHARACTER, PARAMETER :: OW_IN = '*', OW_OUT = '_'
   CHARACTER :: OW_state
   CHARACTER(LEN=2), PARAMETER :: OW_name = 'OW'
-  INTEGER :: timestep, num_water, num_atoms, num_frames, init_timestep, delta_timestep, atom_index
+  INTEGER :: timestep, num_water, num_atoms, num_frames, init_timestep
+  INTEGER :: delta_timestep, atom_index, num_non_ion_water_atoms
   INTEGER :: init_OW_index, num_records
   REAL(KIND=8) :: hydration_radius, hydration_radius_square, dist_square, tube_half_length
   REAL(KIND=8), DIMENSION(3) :: pos_ion, pos_tun1, pos_water, cell_vector
@@ -27,7 +28,7 @@ PROGRAM cowan
   n = COMMAND_ARGUMENT_COUNT()
   call GET_COMMAND_ARGUMENT(NUMBER=0, VALUE=command)
   usage = "Usage: " // TRIM(ADJUSTL(command)) // " input_filename &
-          &-f <frame#> -n <H2O#> -r <hydration radius>"
+          &-r <hydration radius>"
   
   if (n < REQUIRED_NUM_PAR) then
      write(*,"(A,I1,A)") "At least ", (REQUIRED_NUM_PAR+1)/2, " arguments are needed."
@@ -45,19 +46,6 @@ PROGRAM cowan
   do while (i <= n)
      call GET_COMMAND_ARGUMENT(NUMBER=i, VALUE=arg, STATUS=stat)
      select case (arg)
-     case ('-n')
-        i = i + 1
-        call GET_COMMAND_ARGUMENT(NUMBER=i, VALUE=arg, STATUS=stat)
-        if (stat /= 0) then
-           write(*,*) "Unable to read the value of argument -n"
-           write(*,*) usage
-           call EXIT(1)
-        end if
-        read(arg,*, IOSTAT=stat) num_water
-        if (stat/=0) then
-           write(*,*) "Unable to read the value of argument -n, only INTEGER is allowed!"
-           call EXIT(1)
-        end if
      case ('-r')
         i = i + 1
         call GET_COMMAND_ARGUMENT(NUMBER=i, VALUE=arg, STATUS=stat)
@@ -71,19 +59,6 @@ PROGRAM cowan
            write(*,*) "Unable to read the value of argument -r, a real number is needed!"
            call EXIT(1)
         end if
-     case ('-f')
-        i = i + 1
-        call GET_COMMAND_ARGUMENT(NUMBER=i, VALUE=arg, STATUS=stat)
-        if (stat /= 0) then
-           write(*,*) "Unable to read the value of argument -f"
-           write(*,*) usage
-           call EXIT(1)
-        end if
-        read(arg,*, IOSTAT=stat) num_frames
-        if (stat/=0) then
-           write(*,*) "Unable to read the value of argument -f, only INTEGER is allowed!"
-           call EXIT(1)
-        end if
      case default
         write(*,*) "Undefined argument: ", arg
         write(*,*) usage
@@ -93,10 +68,20 @@ PROGRAM cowan
   end do
   !-- end of reading parameters from command line arguments --!
 
+  open(UNIT=input_fileid, FILE=input_filename, STATUS='OLD', IOSTAT=stat, ACTION='READ')
+  if (stat /= 0) then
+     write(*,*) "Error: unable to open file: ", input_filename
+     call EXIT(1)
+  end if  
+  
+  call count_num_frames(num_frames)
+  call count_num_water(num_water, init_OW_index)
+  
   !output parameters being read for confirmation
   write(*,*) "input filename: ", TRIM(input_filename)
   write(*,*) "number of frames:", num_frames  
-  write(*,"(' number of water molecules: ',I5)") num_water
+  write(*,*) "number of water molecules:", num_water
+  write(*,*) "initial OW index:", init_OW_index
   write(*,*) "hydration radius:", hydration_radius
 
   !square the hydration_radius for furthur comparison with the dist_square between water and ion
@@ -113,17 +98,11 @@ PROGRAM cowan
      write(*,*) "Error: failed to allocate pos_ion_table(num_frames)!"
      call EXIT(1)
   end if
-  
-  open(UNIT=input_fileid, FILE=input_filename, STATUS='OLD', IOSTAT=stat, ACTION='READ')
-  if (stat /= 0) then
-     write(*,*) "Error: unable to open file: ", input_filename
-     call EXIT(1)
-  end if
 
   read(input_fileid, *) !title line
   read(input_fileid, *) i, j, num_atoms
 
-  init_OW_index = num_atoms - num_water*3 + 1
+  num_non_ion_water_atoms = num_atoms - num_water*3 - 1
 
   ! start reading records of each timestep
   do i = 1, num_frames
@@ -167,30 +146,33 @@ PROGRAM cowan
      end if
      pos_ion_table(i) = pos_ion(3)
 
-     !read the 1st TUN1 atom z position to know the length of the tube
-     read(input_fileid, *, IOSTAT=stat) atom_name, atom_index
-     if (stat /= 0) then
-        write(*,*) "Error: problem occurs while reading TUN1 records at timestep:", timestep
-        call EXIT(1)
-     end if
-     if (atom_name /= "TUN1") then
-        write(*,*) "Error: problem occurs while reading TUN1 records at timestep:", timestep
-        write(*,*) "       The atom_name should be TUN1, instead of ", atom_name
-        call EXIT(1)
-     end if
-     
-     read(input_fileid, *, IOSTAT=stat) pos_tun1
-     if (stat /= 0) then
-        write(*,*) "Error: problem occurs while reading TUN1 position at timestep:", timestep
-        call EXIT(1)
-     end if
-     tube_half_length = ABS(pos_tun1(3))
+     if (num_non_ion_water_atoms /= 0) then
+        !read the 1st TUN1 atom z position to know the length of the tube
+        read(input_fileid, *, IOSTAT=stat) atom_name, atom_index
+        if (stat /= 0) then
+           write(*,*) "Error: problem occurs while reading TUN1 records at timestep:", timestep
+           call EXIT(1)
+        end if
+        if (atom_name /= "TUN1") then
+           write(*,*) "Error: problem occurs while reading TUN1 records at timestep:", timestep
+           write(*,*) "       The atom_name should be TUN1, instead of ", atom_name
+           call EXIT(1)
+        end if
+        read(input_fileid, *, IOSTAT=stat) pos_tun1
+        if (stat /= 0) then
+           write(*,*) "Error: problem occurs while reading TUN1 position at timestep:", timestep
+           call EXIT(1)
+        end if
+        tube_half_length = ABS(pos_tun1(3))
 
-     !skip non-water atoms ()
-     do j = 1, num_atoms - num_water*3 - 2
-        read(input_fileid, *) !skip atom_name, atom_index
-        read(input_fileid, *) !skip atom position
-     end do
+        !skip non-water atoms ()
+        do j = 1, num_non_ion_water_atoms-1
+           read(input_fileid, *) !skip atom_name, atom_index
+           read(input_fileid, *) !skip atom position
+        end do
+     else
+        tube_half_length = -1
+     end if
 
      !read water molecule position and decide if it is inside the first hydration layer
      do j = 1, num_water
@@ -472,11 +454,13 @@ CONTAINS
          &'0 1 numVertTicks 1 sub {'/&
          &'  dup vertTickSpace mul minVertTick add horiAxis3 vertTick'/&
          &'  newpath'/&
-         &'  dup 2 numFrames mul numVertTicks 1 sub div mul'/&
+         &'  dup ', I5,' numFrames mul numVertTicks 1 sub div mul'/&
          &'  dup exch 10 lt {pop /temp (0) def} {100 lt {/temp (00) def} {/temp (000) def} ifelse} ifelse'/&
          &'  dup vertTickSpace mul minVertTick add temp stringwidth pop 2 div sub'/&
          &'  horiAxis3 pageHeight 60 div sub moveto'/&
-         &'  2 numFrames mul numVertTicks 1 sub div mul cvi 3 string cvs show'/&
+         &'  ', I5, ' numFrames mul numVertTicks 1 sub div mul cvi 3 string cvs show'/&
+         &)") NINT(delta_timestep*0.002), NINT(delta_timestep*0.002)
+    write(ps_output_fileid, "(&
          &'} for'/&
          &''/&
          &''/&
@@ -562,41 +546,64 @@ CONTAINS
          &'  dataBotLimit sub dataRange div graphRange mul botLimit add'/&
          &'} def'/&
          &)") cell_vector(3)/2., -cell_vector(3)/2.
+    if (tube_half_length > 0) then
+       write(ps_output_fileid, "(&
+            &'/dataTubeTop ', F6.2, ' def'/&
+            &'/dataTubeBot ', F6.2, ' def'/&
+            &'/tubeTopAxis dataTubeTop changeToGraph def'/&
+            &'/tubeBotAxis dataTubeBot changeToGraph def'/&
+            &)") tube_half_length, -tube_half_length
+       write(ps_output_fileid, "(&
+            &'gsave'/&
+            &'  0 setlinecap'/&
+            &'  [dataPointSpace 2 div dup 1.5 mul ] 0 setdash'/&
+            &'  newpath'/&
+            &'  vertAxis tubeTopAxis moveto'/&
+            &'  vertAxis2 tubeTopAxis lineto'/&
+            &'  stroke'/&
+            &'  newpath'/&
+            &'  vertAxis tubeBotAxis moveto'/&
+            &'  vertAxis2 tubeBotAxis lineto'/&
+            &'  stroke'/&
+            &'grestore'/&
+            &''/&
+            &'%draw labels'/&
+            &'/Helvetica findfont'/&
+            &'generalFontSize scalefont'/&
+            &'setfont'/&
+            &'newpath'/&
+            &'/label dataTubeTop 6 string cvs def'/&
+            &'vertAxis label stringwidth pop (0) stringwidth pop 2 div add sub tubeTopAxis pageHeight 200 div sub moveto'/&
+            &'label show'/&
+            &'/label dataTubeBot 6 string cvs def'/&
+            &'vertAxis label stringwidth pop (0) stringwidth pop 2 div add sub tubeBotAxis pageHeight 200 div sub moveto'/&
+            &'label show'/&
+            &'/label (AA) def'/&
+            &'vertAxis label stringwidth pop (0) stringwidth pop 2 div add sub horiAxis2 pageHeight 60 div sub moveto'/&
+            &'label show'/&
+            &)")
+    else
+        write(ps_output_fileid, "(&
+             &'%draw labels'/&
+             &'/Helvetica findfont'/&
+             &'generalFontSize scalefont'/&
+             &'setfont'/&
+             &'newpath'/&
+             &'/label dataTopLimit 6 string cvs def'/&
+             &'vertAxis label stringwidth pop (0) stringwidth pop 2 div add sub &
+             &dataTopLimit changeToGraph pageHeight 80 div sub moveto'/&
+             &'label show'/&
+             &'/label dataBotLimit 6 string cvs def'/&
+             &'vertAxis label stringwidth pop (0) stringwidth pop 2 div add sub &
+             &dataBotLimit changeToGraph pageHeight 200 div add moveto'/&
+             &'label show'/&
+             &'/label (AA) def'/&
+             &'vertAxis label stringwidth pop (0) stringwidth pop 2 div add sub &
+             &horiAxis2 pageHeight 60 div sub moveto'/&
+             &'label show'/&
+             &)")
+    end if
     write(ps_output_fileid, "(&
-         &'/dataTubeTop ', F6.2, ' def'/&
-         &'/dataTubeBot ', F6.2, ' def'/&
-         &'/tubeTopAxis dataTubeTop changeToGraph def'/&
-         &'/tubeBotAxis dataTubeBot changeToGraph def'/&
-         &)") tube_half_length, -tube_half_length
-    write(ps_output_fileid, "(&
-         &'gsave'/&
-         &'  0 setlinecap'/&
-         &'  [dataPointSpace 2 div dup 1.5 mul ] 0 setdash'/&
-         &'  newpath'/&
-         &'  vertAxis tubeTopAxis moveto'/&
-         &'  vertAxis2 tubeTopAxis lineto'/&
-         &'  stroke'/&
-         &'  newpath'/&
-         &'  vertAxis tubeBotAxis moveto'/&
-         &'  vertAxis2 tubeBotAxis lineto'/&
-         &'  stroke'/&
-         &'grestore'/&
-         &'%draw labels'/&
-         &'/Helvetica findfont'/&
-         &'generalFontSize scalefont'/&
-         &'setfont'/&
-         &'newpath'/&
-         &'/label dataTubeTop 6 string cvs def'/&
-         &'vertAxis label stringwidth pop (0) stringwidth pop 2 div add sub tubeTopAxis pageHeight 200 div sub moveto'/&
-         &'label show'/&
-         &'/label dataTubeBot 6 string cvs def'/&
-         &'vertAxis label stringwidth pop (0) stringwidth pop 2 div add sub tubeBotAxis pageHeight 200 div sub moveto'/&
-         &'label show'/&
-         &'/label (AA) def'/&
-         &'vertAxis label stringwidth pop (0) stringwidth pop 2 div add sub horiAxis2 pageHeight 60 div sub moveto'/&
-         &'label show'/&
-         &''/&
-         &''/&
          &'gsave'/&
          &'1 setlinejoin'/&
          &'newpath'/&
@@ -623,6 +630,92 @@ CONTAINS
          &'showpage'/&
          &)")
   END SUBROUTINE output_ps
+
+  SUBROUTINE count_num_frames(total_num)
+    IMPLICIT NONE
+    INTEGER :: total_num
+    CHARACTER(LEN=128) :: line
+    total_num = 0
+    read(input_fileid, *) !title line
+    read(input_fileid, *) i, j, num_atoms
+    do while(.true.)
+       read(input_fileid, "(A)", IOSTAT=stat) line
+       if (stat < 0) then       !End of file
+          exit
+       end if
+       read(line, *, IOSTAT=stat) str_timestep
+       if (stat /= 0) then
+          write(*,*) "Error: problem occurs while counting the num_frames"
+          call EXIT(1)          
+       else if (str_timestep == "timestep") then
+          total_num = total_num + 1
+       end if
+    end do
+    REWIND(input_fileid)
+  END SUBROUTINE count_num_frames
+
+  SUBROUTINE count_num_water(total_num, init_num)
+    IMPLICIT NONE
+    INTEGER, INTENT(OUT) :: total_num, init_num
+    CHARACTER(LEN=128) :: line    
+    read(input_fileid, *) !title line
+    read(input_fileid, *) i, j, num_atoms
+    read(input_fileid, *) str_timestep, timestep
+    read(input_fileid, *) !cell vector
+    read(input_fileid, *) !cell vector
+    read(input_fileid, *) !cell vector
+    do while(.true.)
+       read(input_fileid, "(A)", IOSTAT=stat) line
+       if (stat < 0) then       !End of file
+          write(*,*) "Error: problem occurs while reading ion records for counting num_water."
+          write(*,*) "       There is no water at all!"
+          call EXIT(1)
+       end if       
+       read(line, *, IOSTAT=stat) atom_name
+       if (stat /= 0) then
+          write(*,*) "Error: problem occurs while reading ion records for counting num_water."
+          call EXIT(1)
+       else if (atom_name == "OW") then
+          read(line, *, IOSTAT=stat) atom_name, atom_index
+          init_num = atom_index
+          total_num = 1
+          read(input_fileid, *, IOSTAT=stat) pos_ion
+          exit
+       end if
+    end do
+    do while(.true.)
+       do i = 1,2               !ignore HW records
+          read(input_fileid, *, IOSTAT=stat) atom_name, atom_index
+          if (stat /= 0) then
+             write(*,*) "Error: problem occurs while reading ion records for counting num_water"
+             call EXIT(1)
+          end if
+          if (atom_name /= "HW") then
+             write(*,*) "Error: problem occurs while reading ion records for counting num_water"
+             write(*,*) "atom_name should be HW, instead of "//atom_name
+             call EXIT(1)
+          end if
+          read(input_fileid, *, IOSTAT=stat) pos_ion
+       end do
+       ! read OW record
+       read(input_fileid, *, IOSTAT=stat) atom_name, atom_index
+       if (stat /= 0) then
+          write(*,*) "Error: problem occurs while reading ion records for counting num_water"
+          call EXIT(1)
+       end if
+       if (atom_name == "OW") then
+          total_num = total_num + 1
+       else if (atom_name == "timestep") then
+          exit
+       else
+          write(*,*) "Error: problem occurs while reading ion records for counting num_water:"
+          write(*,*) "atom_name should be OW, instead of "//atom_name
+          call EXIT(1)          
+       end if
+       read(input_fileid, *, IOSTAT=stat) pos_ion       
+    end do
+    REWIND(input_fileid)
+  END SUBROUTINE count_num_water
 
   FUNCTION get_num_digits(ii)
     IMPLICIT NONE
