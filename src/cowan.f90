@@ -321,8 +321,10 @@ CONTAINS
          &''/&
          &'/minHoriTick horiAxis2 pageHeight 40 div add def'/&
          &'/maxHoriTick horiAxis1 pageHeight 40 div pageHeight 60 div add sub def'/&
-         &'/minHoriTickNum 3 def'/&
-         &'/maxHoriTickNum 7 def'/&
+         &'/minHoriTickNum ', I2, ' def'/&
+         &'/maxHoriTickNum ', I2, ' def'/&
+         &)") MINVAL(hydration_sum_table), MAXVAL(hydration_sum_table)
+    write(ps_output_fileid, "(&
          &'/numHoriTicks maxHoriTickNum minHoriTickNum sub 1 add def'/&
          &'/horiTickSpace maxHoriTick minHoriTick sub numHoriTicks 1 sub div def'/&
          &''/&
