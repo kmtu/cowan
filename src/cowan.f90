@@ -9,7 +9,7 @@ PROGRAM cowan
   INTEGER, PARAMETER :: output_fileid = 11
   CHARACTER(LEN=128) :: output_filename
   INTEGER :: n, i, j, k, stat
-  CHARACTER(LEN=128) :: command, usage, arg
+  CHARACTER(LEN=128) :: command, usage, arg, line
   CHARACTER(LEN=2) :: out_fmt
   CHARACTER(LEN=8) :: str_timestep, atom_name
   CHARACTER, PARAMETER :: OW_IN = '*', OW_OUT = '_'
@@ -99,31 +99,39 @@ PROGRAM cowan
      call EXIT(1)
   end if
 
-  read(input_fileid, *) !title line
-  read(input_fileid, *) i, j, num_atoms
-
+  do while(.true.)
+     read(input_fileid, "(A)", IOSTAT=stat) line
+     if (stat < 0) then
+        write(*,*) "Error: problem occurs while reading the 1st timestep"
+        write(*,*) "       End of file encounters!"
+        call EXIT(1)
+     end if
+     read(line, *, IOSTAT=stat) str_timestep, timestep, num_atoms
+     if (stat == 0) then
+        if (str_timestep == "timestep") then
+           init_timestep = timestep        
+           exit
+        end if
+     end if
+  end do
   num_non_ion_water_atoms = num_atoms - num_water*3 - 1
 
   ! start reading records of each timestep
   do i = 1, num_frames
-     read(input_fileid, *, IOSTAT=stat) str_timestep, timestep
-     if (i == 1) then
-        if (stat /= 0) then
-           write(*,*) "Error: problem occurs while reading the 1st timestep"
-           call EXIT(1)
-        end if
-        init_timestep = timestep
-     else if (i == 2) then
-        if (stat /= 0) then
-           write(*,*) "Error: problem occurs while reading the 2nd timestep"
-           call EXIT(1)
-        end if
-        delta_timestep = timestep - init_timestep
-     else
-        if (stat /= 0) then
-           write(*,*) "Error: problem occurs while reading timestep:", &
-                &init_timestep+(i-1)*delta_timestep
-           call EXIT(1)
+     if (i > 1) then
+        read(input_fileid, *, IOSTAT=stat) str_timestep, timestep
+        if (i == 2) then
+           if (stat /= 0 .OR. str_timestep /= "timestep") then
+              write(*,*) "Error: problem occurs while reading the 2nd timestep"
+              call EXIT(1)
+           end if
+           delta_timestep = timestep - init_timestep
+        else
+           if (stat /= 0 .OR. str_timestep /= "timestep") then
+              write(*,*) "Error: problem occurs while reading timestep:", &
+                   &init_timestep+(i-1)*delta_timestep
+              call EXIT(1)
+           end if
         end if
      end if
 
@@ -638,8 +646,6 @@ CONTAINS
     INTEGER :: total_num
     CHARACTER(LEN=128) :: line
     total_num = 0
-    read(input_fileid, *) !title line
-    read(input_fileid, *) i, j, num_atoms
     do while(.true.)
        read(input_fileid, "(A)", IOSTAT=stat) line
        if (stat < 0) then       !End of file
@@ -660,12 +666,6 @@ CONTAINS
     IMPLICIT NONE
     INTEGER, INTENT(OUT) :: total_num, init_num
     CHARACTER(LEN=128) :: line    
-    read(input_fileid, *) !title line
-    read(input_fileid, *) i, j, num_atoms
-    read(input_fileid, *) str_timestep, timestep
-    read(input_fileid, *) !cell vector
-    read(input_fileid, *) !cell vector
-    read(input_fileid, *) !cell vector
     do while(.true.)
        read(input_fileid, "(A)", IOSTAT=stat) line
        if (stat < 0) then       !End of file
