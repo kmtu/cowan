@@ -18,7 +18,8 @@ PROGRAM cowan
   INTEGER :: timestep, num_water, num_atoms, num_frames, init_timestep
   INTEGER :: delta_timestep, atom_index, num_non_ion_water_atoms
   INTEGER :: init_OW_index, num_records
-  REAL(KIND=8) :: hydration_radius, hydration_radius_square, dist_square, tube_half_length
+  REAL(KIND=8) :: hydration_radius, hydration_radius_square, dist_square
+  REAL(KIND=8) :: tube_half_length, steptime
   REAL(KIND=8), DIMENSION(3) :: pos_ion, pos_tun1, pos_water, cell_vector
   REAL(KIND=8), DIMENSION(:), ALLOCATABLE :: pos_ion_table
   LOGICAL, DIMENSION(:,:), ALLOCATABLE :: hydration_table
@@ -74,12 +75,13 @@ PROGRAM cowan
      call EXIT(1)
   end if  
   
-  call count_num_frames(num_frames)
+  call count_num_frames(num_frames, steptime)
   call count_num_water(num_water, init_OW_index)
   
   !output parameters being read for confirmation
   write(*,*) "input filename: ", TRIM(input_filename)
-  write(*,*) "number of frames:", num_frames  
+  write(*,*) "number of frames:", num_frames
+  write(*,*) "timestep::", steptime
   write(*,*) "number of water molecules:", num_water
   write(*,*) "initial OW index:", init_OW_index
   write(*,*) "hydration radius:", hydration_radius
@@ -464,12 +466,15 @@ CONTAINS
          &'0 1 numVertTicks 1 sub {'/&
          &'  dup vertTickSpace mul minVertTick add horiAxis3 vertTick'/&
          &'  newpath'/&
-         &'  dup ', I5,' numFrames mul numVertTicks 1 sub div mul'/&
+         &'  dup ', G7.2,' numFrames mul numVertTicks 1 sub div mul'/&
          &'  dup exch 10 lt {pop /temp (0) def} {100 lt {/temp (00) def} {/temp (000) def} ifelse} ifelse'/&
          &'  dup vertTickSpace mul minVertTick add temp stringwidth pop 2 div sub'/&
          &'  horiAxis3 pageHeight 60 div sub moveto'/&
-         &'  ', I5, ' numFrames mul numVertTicks 1 sub div mul cvi 3 string cvs show'/&
-         &)") NINT(delta_timestep*0.002), NINT(delta_timestep*0.002)
+         &'  ', G7.2, ' numFrames mul numVertTicks 1 sub div mul cvi 6 string cvs show'/&
+         &'%use below if the timestep labels have decimal parts.'/&
+         &'% ', G7.2, ' numFrames mul numVertTicks 1 sub div mul cvr 6 string cvs show'/&
+         &)") delta_timestep*steptime, delta_timestep*steptime,&
+         &delta_timestep*steptime
     write(ps_output_fileid, "(&
          &'} for'/&
          &''/&
@@ -520,6 +525,7 @@ CONTAINS
          &'%draw n'/&
          &'gsave'/&
          &'1 setlinejoin'/&
+         &'%0.2 setlinewidth %use it if the lines are too dense'/&
          &'newpath'/&
          &)")
     write(ps_output_fileid, "('%%%% Fortran loop starts')")
@@ -566,7 +572,7 @@ CONTAINS
        write(ps_output_fileid, "(&
             &'gsave'/&
             &'  0 setlinecap'/&
-            &'  [dataPointSpace 2 div dup 1.5 mul ] 0 setdash'/&
+            &'  [pageWidth 200 div dup] 0 setdash'/&
             &'  newpath'/&
             &'  vertAxis tubeTopAxis moveto'/&
             &'  vertAxis2 tubeTopAxis lineto'/&
@@ -641,11 +647,14 @@ CONTAINS
          &)")
   END SUBROUTINE output_ps
 
-  SUBROUTINE count_num_frames(total_num)
+  SUBROUTINE count_num_frames(total_num, dt)
     IMPLICIT NONE
     INTEGER :: total_num
+    REAL(KIND=8) :: dt
     CHARACTER(LEN=128) :: line
+    INTEGER :: dummy
     total_num = 0
+    dt = -1.
     do while(.true.)
        read(input_fileid, "(A)", IOSTAT=stat) line
        if (stat < 0) then       !End of file
@@ -656,6 +665,10 @@ CONTAINS
           write(*,*) "Error: problem occurs while counting the num_frames"
           call EXIT(1)          
        else if (str_timestep == "timestep") then
+          if (dt < 0) then
+             read(line, *, IOSTAT=stat) str_timestep, dummy, dummy ,dummy,&
+                  & dummy, dt
+          end if
           total_num = total_num + 1
        end if
     end do
