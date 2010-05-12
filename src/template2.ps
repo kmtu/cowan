@@ -1,0 +1,686 @@
+%!PS-Adobe-3.0
+<< /PageSize [ 595 842 ] /ImagingBBox null >> setpagedevice
+72 25.4 div dup scale %use mm-units
+
+/pageHeight 297 def
+/pageWidth 210 def
+
+/marginLeft pageWidth 15 div def
+/marginRight marginLeft def
+/marginTop pageHeight 30 div def
+/marginBot marginTop def
+
+/boundTop pageHeight marginTop sub def
+/boundLeft marginLeft def
+/boundBot marginBot def
+
+
+/numRecords         44 def
+/numFrames         50 def
+
+/recordHeight pageHeight 2 div numRecords div def
+
+/vertAxis boundLeft marginLeft add def
+/vertAxis2 pageWidth marginRight 2 mul sub def
+
+/waterLabelAlign {vertAxis (00000) stringwidth pop sub} bind def
+recordHeight 1.2 div 4 lt {/waterLabelFontSize recordHeight 1.2 div def} 
+{/waterLabelFontSize 4 def} ifelse 
+/generalFontSize pageWidth 50 div def
+
+/Helvetica findfont
+generalFontSize scalefont
+setfont
+
+/minVertTick vertAxis pageWidth 40 div add def
+/maxVertTick vertAxis2 pageWidth 40 div sub def
+/numVertTicks 11 def
+/vertTickSpace maxVertTick minVertTick sub numVertTicks 1 sub div def
+
+/horiAxis1 boundBot def
+/horiAxis2 horiAxis1 numRecords 2 add recordHeight mul add pageHeight 60 div add def
+/horiAxis3 boundTop horiAxis2 add 2 div def
+
+/minHoriTick horiAxis2 pageHeight 40 div add def
+/maxHoriTick horiAxis3 pageHeight 40 div pageHeight 60 div add sub def
+/minHoriTickNum  4 def
+/maxHoriTickNum  7 def
+
+/numHoriTicks maxHoriTickNum minHoriTickNum sub 1 add def
+/horiTickSpace maxHoriTick minHoriTick sub numHoriTicks 1 sub div def
+
+/dataPointSpace maxVertTick minVertTick sub numFrames div def
+
+/HSBoxHeight recordHeight 2 div def
+/HSBoxWidth dataPointSpace def
+/HSBox {
+newpath
+moveto
+HSBoxWidth 2 div 0 rlineto
+0 HSBoxHeight rlineto
+HSBoxWidth neg 0 rlineto
+0 HSBoxHeight neg rlineto
+closepath
+fill
+} bind def
+
+/vertTickLength pageHeight 200 div def
+/vertTick {
+  newpath
+  moveto
+  0 vertTickLength rlineto
+  stroke
+} bind def
+
+/horiTickLength pageHeight 200 div def
+/horiTick {
+  newpath
+  moveto
+  horiTickLength 0 rlineto
+  stroke
+} bind def
+
+/arrowhead {% stack: s x1 y1, current point: x0 y0 
+  gsave 
+    currentpoint % s x1 y1 x0 y0 
+    4 2 roll exch % s x0 y0 y1 x1 
+    4 -1 roll exch % s y0 y1 x0 x1 
+    sub 3 1 roll % s x1-x2 y0 y1 
+    sub exch % s y0-y1 x1-x2 
+    atan rotate % rotate over arctan((y0-y1)/(x1-x2)) 
+    dup scale % scale by factor s
+    currentpoint exch 2 add exch moveto
+    -5 2 rlineto 1 -2 rlineto -1 -2 rlineto 
+    closepath fill % fill arrowhead 
+  grestore 
+} def
+%%%%%% def end %%%%%%
+
+%set suitable linewidth
+pageHeight 600 div pageWidth 400 div lt
+{pageHeight 600 div} {pageWidth 400 div} ifelse setlinewidth
+
+%set line cap to round cap
+1 setlinecap
+
+%draw vertAxis
+newpath
+vertAxis horiAxis1 moveto
+vertAxis horiAxis2 pageHeight 60 div sub lineto 
+stroke
+
+newpath
+vertAxis horiAxis2 moveto
+vertAxis horiAxis3 pageHeight 60 div sub lineto
+0.6 vertAxis horiAxis2 arrowhead
+stroke
+%draw horiTick with labels
+0 1 numHoriTicks 1 sub {
+  dup horiTickSpace mul minHoriTick add vertAxis exch horiTick
+  newpath
+  dup horiTickSpace mul minHoriTick add pageHeight 200 div sub vertAxis (00) stringwidth pop sub exch moveto
+  minHoriTickNum add 1 string cvs show
+} for
+gsave
+  /Helvetica findfont
+  generalFontSize 1.3 mul scalefont
+  setfont
+  newpath
+  boundLeft (0) stringwidth pop add horiAxis2 horiAxis3 add 2 div moveto
+  (n) show
+grestore
+
+newpath
+vertAxis horiAxis3 moveto
+vertAxis boundTop lineto
+0.6 vertAxis horiAxis3 arrowhead
+stroke
+%draw vertical axis label
+gsave
+  /Helvetica findfont
+  generalFontSize 1.3 mul scalefont
+  setfont
+  newpath
+  boundLeft (0) stringwidth pop add boundTop horiAxis3 add 2 div moveto
+  (z) show
+grestore
+
+%draw horiAxis1 and arrowhead
+newpath
+boundLeft horiAxis1 moveto
+vertAxis2 horiAxis1 lineto
+0.6 vertAxis2 1 sub horiAxis1 arrowhead
+stroke
+%draw vertTick with labels
+0 1 numVertTicks 1 sub {
+  dup vertTickSpace mul minVertTick add horiAxis1 vertTick
+  newpath
+  dup 2.0     numFrames mul numVertTicks 1 sub div mul
+  dup exch 10 lt {pop /temp (0) def} {100 lt {/temp (00) def} {/temp (000) def} ifelse} ifelse
+  dup vertTickSpace mul minVertTick add temp stringwidth pop 2 div sub
+  horiAxis1 pageHeight 60 div sub moveto
+  2.0     numFrames mul numVertTicks 1 sub div mul cvi 6 string cvs show
+%use below if the timestep labels have decimal part.
+% 2.0     numFrames mul numVertTicks 1 sub div mul cvr 6 string cvs show
+} for
+
+%draw horiAxis2 and arrowhead
+newpath
+boundLeft horiAxis2 moveto
+vertAxis2 horiAxis2 lineto
+0.6 vertAxis2 1 sub horiAxis2 arrowhead
+stroke
+%draw vertTick with labels
+0 1 numVertTicks 1 sub {
+  dup vertTickSpace mul minVertTick add horiAxis2 vertTick
+  newpath
+  dup 2.0     numFrames mul numVertTicks 1 sub div mul
+  dup exch 10 lt {pop /temp (0) def} {100 lt {/temp (00) def} {/temp (000) def} ifelse} ifelse
+  dup vertTickSpace mul minVertTick add temp stringwidth pop 2 div sub
+  horiAxis2 pageHeight 60 div sub moveto
+  2.0     numFrames mul numVertTicks 1 sub div mul cvi 6 string cvs show
+%use below if the timestep labels have decimal part.
+% 2.0     numFrames mul numVertTicks 1 sub div mul cvr 6 string cvs show
+} for
+
+%draw horiAxis3 and arrowhead
+newpath
+boundLeft horiAxis3 moveto
+vertAxis2 horiAxis3 lineto
+0.6 vertAxis2 1 sub horiAxis3 arrowhead
+stroke
+%draw vertTick with labels
+0 1 numVertTicks 1 sub {
+  dup vertTickSpace mul minVertTick add horiAxis3 vertTick
+  newpath
+  dup 2.0     numFrames mul numVertTicks 1 sub div mul
+  dup exch 10 lt {pop /temp (0) def} {100 lt {/temp (00) def} {/temp (000) def} ifelse} ifelse
+  dup vertTickSpace mul minVertTick add temp stringwidth pop 2 div sub
+  horiAxis3 pageHeight 60 div sub moveto
+  2.0     numFrames mul numVertTicks 1 sub div mul cvi 6 string cvs show
+%use below if the timestep labels have decimal part.
+% 2.0     numFrames mul numVertTicks 1 sub div mul cvr 6 string cvs show
+} for
+
+
+newpath
+vertAxis2 (0) stringwidth pop add horiAxis1 pageHeight 290 div sub moveto
+(t/ps) show
+
+newpath
+vertAxis2 (0) stringwidth pop add horiAxis2 pageHeight 290 div sub moveto
+(t/ps) show
+
+newpath
+vertAxis2 (0) stringwidth pop add horiAxis3 pageHeight 290 div sub moveto
+(t/ps) show
+
+
+/Helvetica findfont
+waterLabelFontSize scalefont
+setfont
+
+%draw water records
+
+%%%% Fortran loop starts
+newpath
+/order    1 def
+waterLabelAlign horiAxis1 recordHeight order mul add moveto
+(839) show
+
+minVertTick HSBoxWidth 46 mul add horiAxis1 recordHeight order mul add HSBox
+minVertTick HSBoxWidth 47 mul add horiAxis1 recordHeight order mul add HSBox
+minVertTick HSBoxWidth 48 mul add horiAxis1 recordHeight order mul add HSBox
+minVertTick HSBoxWidth 49 mul add horiAxis1 recordHeight order mul add HSBox
+minVertTick HSBoxWidth 50 mul add horiAxis1 recordHeight order mul add HSBox
+
+newpath
+/order    2 def
+waterLabelAlign horiAxis1 recordHeight order mul add moveto
+(878) show
+
+minVertTick HSBoxWidth 50 mul add horiAxis1 recordHeight order mul add HSBox
+
+newpath
+/order    3 def
+waterLabelAlign horiAxis1 recordHeight order mul add moveto
+(1556) show
+
+minVertTick HSBoxWidth 25 mul add horiAxis1 recordHeight order mul add HSBox
+
+newpath
+/order    numRecords def
+waterLabelAlign horiAxis1 recordHeight order mul add moveto
+(1901) show
+
+minVertTick HSBoxWidth 39 mul add horiAxis1 recordHeight order mul add HSBox
+minVertTick HSBoxWidth 40 mul add horiAxis1 recordHeight order mul add HSBox
+minVertTick HSBoxWidth 41 mul add horiAxis1 recordHeight order mul add HSBox
+minVertTick HSBoxWidth 2 mul add horiAxis1 recordHeight order mul add HSBox
+minVertTick HSBoxWidth 6 mul add horiAxis1 recordHeight order mul add HSBox
+minVertTick HSBoxWidth 44 mul add horiAxis1 recordHeight order mul add HSBox
+minVertTick HSBoxWidth 45 mul add horiAxis1 recordHeight order mul add HSBox
+
+
+%%%% Fortran loop ends
+
+%draw n
+gsave
+1 setlinejoin
+%0.2 setlinewidth %use it if the lines are too dense
+newpath
+
+%%%% Fortran loop starts
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace     1 mul add minHoriTick horiTickSpace point mul add moveto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace     2 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace     3 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace     4 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace     5 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace     6 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace     7 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace     8 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace     9 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    10 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    11 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    12 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    13 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    14 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    15 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    16 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    17 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    18 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    19 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    20 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    21 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    22 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    23 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    24 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    25 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    26 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    27 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    28 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    29 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    30 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    31 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    32 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  7 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    33 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    34 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    35 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    36 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    37 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    38 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    39 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    40 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    41 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    42 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    43 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    44 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    45 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    46 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  5 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    47 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    48 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  6 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    49 mul add minHoriTick horiTickSpace point mul add lineto
+
+/data  4 def
+/point data minHoriTickNum sub def
+minVertTick dataPointSpace    50 mul add minHoriTick horiTickSpace point mul add lineto
+
+%%%% Fortran loop ends
+
+stroke
+grestore
+
+%draw tube top and bottom line
+/topLimit boundTop def
+/botLimit horiAxis3 vertTickLength add def
+/graphRange topLimit botLimit sub def
+
+/dataTopLimit  28.45 def
+/dataBotLimit -28.45 def
+/dataRange dataTopLimit dataBotLimit sub def
+
+/changeToGraph {
+  dataBotLimit sub dataRange div graphRange mul botLimit add
+} def
+
+/dataTubeTop  12.75 def
+/dataTubeBot -12.75 def
+/tubeTopAxis dataTubeTop changeToGraph def
+/tubeBotAxis dataTubeBot changeToGraph def
+
+gsave
+  0 setlinecap
+  [pageWidth 200 div dup] 0 setdash
+  newpath
+  vertAxis tubeTopAxis moveto
+  vertAxis2 tubeTopAxis lineto
+  stroke
+  newpath
+  vertAxis tubeBotAxis moveto
+  vertAxis2 tubeBotAxis lineto
+  stroke
+grestore
+
+%draw labels
+/Helvetica findfont
+generalFontSize scalefont
+setfont
+newpath
+/label dataTubeTop 6 string cvs def
+vertAxis label stringwidth pop (0) stringwidth pop 2 div add sub tubeTopAxis pageHeight 200 div sub moveto
+label show
+/label dataTubeBot 6 string cvs def
+vertAxis label stringwidth pop (0) stringwidth pop 2 div add sub tubeBotAxis pageHeight 200 div sub moveto
+label show
+/label (AA) def
+vertAxis label stringwidth pop (0) stringwidth pop 2 div add sub topLimit pageHeight 60 div sub moveto
+label show
+
+gsave
+1 setlinejoin
+newpath
+
+%%%% Fortran loop starts
+/data   0.197460067289E+02 def
+minVertTick dataPointSpace     1 mul add data changeToGraph moveto
+
+/data   0.180598663566E+02 def
+minVertTick dataPointSpace     2 mul add data changeToGraph lineto
+
+/data   0.172882273758E+02 def
+minVertTick dataPointSpace     3 mul add data changeToGraph lineto
+
+/data   0.165334482880E+02 def
+minVertTick dataPointSpace     4 mul add data changeToGraph lineto
+
+/data   0.159417175326E+02 def
+minVertTick dataPointSpace     5 mul add data changeToGraph lineto
+
+/data   0.161322936572E+02 def
+minVertTick dataPointSpace     6 mul add data changeToGraph lineto
+
+/data   0.163948196652E+02 def
+minVertTick dataPointSpace     7 mul add data changeToGraph lineto
+
+/data   0.156969257700E+02 def
+minVertTick dataPointSpace     8 mul add data changeToGraph lineto
+
+/data   0.159348706957E+02 def
+minVertTick dataPointSpace     9 mul add data changeToGraph lineto
+
+/data   0.154425609765E+02 def
+minVertTick dataPointSpace    10 mul add data changeToGraph lineto
+
+/data   0.138650975211E+02 def
+minVertTick dataPointSpace    11 mul add data changeToGraph lineto
+
+/data   0.138626335506E+02 def
+minVertTick dataPointSpace    12 mul add data changeToGraph lineto
+
+/data   0.114299779766E+02 def
+minVertTick dataPointSpace    13 mul add data changeToGraph lineto
+
+/data   0.111552274745E+02 def
+minVertTick dataPointSpace    14 mul add data changeToGraph lineto
+
+/data   0.771514250111E+01 def
+minVertTick dataPointSpace    15 mul add data changeToGraph lineto
+
+/data   0.531039250565E+01 def
+minVertTick dataPointSpace    16 mul add data changeToGraph lineto
+
+/data   0.579360690206E+01 def
+minVertTick dataPointSpace    17 mul add data changeToGraph lineto
+
+/data   0.408918402393E+01 def
+minVertTick dataPointSpace    18 mul add data changeToGraph lineto
+
+/data   0.288929465985E+01 def
+minVertTick dataPointSpace    19 mul add data changeToGraph lineto
+
+/data   0.355324911995E+01 def
+minVertTick dataPointSpace    20 mul add data changeToGraph lineto
+
+/data   0.252123859496E+01 def
+minVertTick dataPointSpace    21 mul add data changeToGraph lineto
+
+/data   0.208002629518E+01 def
+minVertTick dataPointSpace    22 mul add data changeToGraph lineto
+
+/data   0.815876428961E+00 def
+minVertTick dataPointSpace    23 mul add data changeToGraph lineto
+
+/data   0.130102775166E+01 def
+minVertTick dataPointSpace    24 mul add data changeToGraph lineto
+
+/data  -0.122497885838E+01 def
+minVertTick dataPointSpace    25 mul add data changeToGraph lineto
+
+/data  -0.183545129509E+01 def
+minVertTick dataPointSpace    26 mul add data changeToGraph lineto
+
+/data  -0.518277006594E+01 def
+minVertTick dataPointSpace    27 mul add data changeToGraph lineto
+
+/data  -0.530988990903E+01 def
+minVertTick dataPointSpace    28 mul add data changeToGraph lineto
+
+/data  -0.795652570786E+01 def
+minVertTick dataPointSpace    29 mul add data changeToGraph lineto
+
+/data  -0.749506059773E+01 def
+minVertTick dataPointSpace    30 mul add data changeToGraph lineto
+
+/data  -0.101358691211E+02 def
+minVertTick dataPointSpace    31 mul add data changeToGraph lineto
+
+/data  -0.110684153590E+02 def
+minVertTick dataPointSpace    32 mul add data changeToGraph lineto
+
+/data  -0.127452927975E+02 def
+minVertTick dataPointSpace    33 mul add data changeToGraph lineto
+
+/data  -0.145930651348E+02 def
+minVertTick dataPointSpace    34 mul add data changeToGraph lineto
+
+/data  -0.146446016333E+02 def
+minVertTick dataPointSpace    35 mul add data changeToGraph lineto
+
+/data  -0.161474504643E+02 def
+minVertTick dataPointSpace    36 mul add data changeToGraph lineto
+
+/data  -0.156936027390E+02 def
+minVertTick dataPointSpace    37 mul add data changeToGraph lineto
+
+/data  -0.157313755981E+02 def
+minVertTick dataPointSpace    38 mul add data changeToGraph lineto
+
+/data  -0.177229068212E+02 def
+minVertTick dataPointSpace    39 mul add data changeToGraph lineto
+
+/data  -0.183250907435E+02 def
+minVertTick dataPointSpace    40 mul add data changeToGraph lineto
+
+/data  -0.185870480714E+02 def
+minVertTick dataPointSpace    41 mul add data changeToGraph lineto
+
+/data  -0.187072652462E+02 def
+minVertTick dataPointSpace    42 mul add data changeToGraph lineto
+
+/data  -0.193341985054E+02 def
+minVertTick dataPointSpace    43 mul add data changeToGraph lineto
+
+/data  -0.190461027762E+02 def
+minVertTick dataPointSpace    44 mul add data changeToGraph lineto
+
+/data  -0.194358989798E+02 def
+minVertTick dataPointSpace    45 mul add data changeToGraph lineto
+
+/data  -0.218309898383E+02 def
+minVertTick dataPointSpace    46 mul add data changeToGraph lineto
+
+/data  -0.237132536286E+02 def
+minVertTick dataPointSpace    47 mul add data changeToGraph lineto
+
+/data  -0.231756075540E+02 def
+minVertTick dataPointSpace    48 mul add data changeToGraph lineto
+
+/data  -0.241376348705E+02 def
+minVertTick dataPointSpace    49 mul add data changeToGraph lineto
+
+/data  -0.271011236207E+02 def
+minVertTick dataPointSpace    50 mul add data changeToGraph lineto
+
+%%%% Fortran loop ends
+
+stroke
+grestore
+
+showpage
+

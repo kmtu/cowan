@@ -299,6 +299,7 @@ CONTAINS
          &''/&
          &'/boundTop pageHeight marginTop sub def'/&
          &'/boundLeft marginLeft def'/&
+         &'/boundBot marginBot def'/&
          &''/&
          &)")
     write(ps_output_fileid, "(&
@@ -325,12 +326,12 @@ CONTAINS
          &'/numVertTicks 11 def'/&
          &'/vertTickSpace maxVertTick minVertTick sub numVertTicks 1 sub div def'/&
          &''/&
-         &'/horiAxis1 boundTop numRecords 1 add recordHeight mul sub def'/&
-         &'/horiAxis3 marginBot marginBot add def'/&
-         &'/horiAxis2 horiAxis1 horiAxis3 add 2 div def'/&
+         &'/horiAxis1 boundBot def'/&
+         &'/horiAxis2 horiAxis1 numRecords 2 add recordHeight mul add pageHeight 60 div add def'/&
+         &'/horiAxis3 boundTop horiAxis2 add 2 div def'/&
          &''/&
          &'/minHoriTick horiAxis2 pageHeight 40 div add def'/&
-         &'/maxHoriTick horiAxis1 pageHeight 40 div pageHeight 60 div add sub def'/&
+         &'/maxHoriTick horiAxis3 pageHeight 40 div pageHeight 60 div add sub def'/&
          &'/minHoriTickNum ', I2, ' def'/&
          &'/maxHoriTickNum ', I2, ' def'/&
          &)") MINVAL(hydration_sum_table), MAXVAL(hydration_sum_table)
@@ -394,13 +395,13 @@ CONTAINS
          &''/&
          &'%draw vertAxis'/&
          &'newpath'/&
-         &'vertAxis boundTop moveto'/&
-         &'vertAxis horiAxis1 lineto '/&
+         &'vertAxis horiAxis1 moveto'/&
+         &'vertAxis horiAxis2 pageHeight 60 div sub lineto'/&
          &'stroke'/&
          &''/&
          &'newpath'/&
          &'vertAxis horiAxis2 moveto'/&
-         &'vertAxis horiAxis1 pageHeight 60 div sub lineto'/&
+         &'vertAxis horiAxis3 pageHeight 60 div sub lineto'/&
          &'0.6 vertAxis horiAxis2 arrowhead'/&
          &'stroke'/&
          &'%draw horiTick with labels'/&
@@ -415,13 +416,13 @@ CONTAINS
          &'  generalFontSize 1.3 mul scalefont'/&
          &'  setfont'/&
          &'  newpath'/&
-         &'  boundLeft (0) stringwidth pop add horiAxis1 horiAxis2 add 2 div moveto'/&
+         &'  boundLeft (0) stringwidth pop add horiAxis2 horiAxis3 add 2 div moveto'/&
          &'  (n) show'/&
          &'grestore'/&
          &''/&
          &'newpath'/&
          &'vertAxis horiAxis3 moveto'/&
-         &'vertAxis horiAxis2 pageHeight 60 div sub lineto'/&
+         &'vertAxis boundTop lineto'/&
          &'0.6 vertAxis horiAxis3 arrowhead'/&
          &'stroke'/&
          &'%draw vertical axis label'/&
@@ -430,7 +431,7 @@ CONTAINS
          &'  generalFontSize 1.3 mul scalefont'/&
          &'  setfont'/&
          &'  newpath'/&
-         &'  boundLeft (0) stringwidth pop add horiAxis2 horiAxis3 add 2 div moveto'/&
+         &'  boundLeft (0) stringwidth pop add boundTop horiAxis3 add 2 div moveto'/&
          &'  (z) show'/&
          &'grestore'/&
          &''/&
@@ -440,22 +441,44 @@ CONTAINS
          &'vertAxis2 horiAxis1 lineto'/&
          &'0.6 vertAxis2 1 sub horiAxis1 arrowhead'/&
          &'stroke'/&
-         &'%draw vertTick'/&
+         &)")
+    write(ps_output_fileid, "(&    
+         &'%draw vertTick with labels'/&
          &'0 1 numVertTicks 1 sub {'/&
-         &'  vertTickSpace mul minVertTick add horiAxis1 vertTick'/&
+         &'  dup vertTickSpace mul minVertTick add horiAxis1 vertTick'/&
+         &'  newpath'/&
+         &'  dup ',G7.2,' numFrames mul numVertTicks 1 sub div mul'/&
+         &'  dup exch 10 lt {pop /temp (0) def} {100 lt {/temp (00) def} {/temp (000) def} ifelse} ifelse'/&
+         &'  dup vertTickSpace mul minVertTick add temp stringwidth pop 2 div sub'/&
+         &'  horiAxis1 pageHeight 60 div sub moveto'/&
+         &'  ',G7.2,' numFrames mul numVertTicks 1 sub div mul cvi 6 string cvs show'/&
+         &'%use below if the timestep labels have decimal part.'/&
+         &'% ',G7.2,' numFrames mul numVertTicks 1 sub div mul cvr 6 string cvs show'/&
          &'} for'/&
-         &''/&
+         &)") delta_timestep*steptime, delta_timestep*steptime,&
+         &delta_timestep*steptime
+    write(ps_output_fileid, "(&
          &'%draw horiAxis2 and arrowhead'/&
          &'newpath'/&
          &'boundLeft horiAxis2 moveto'/&
          &'vertAxis2 horiAxis2 lineto'/&
          &'0.6 vertAxis2 1 sub horiAxis2 arrowhead'/&
          &'stroke'/&
-         &'%draw vertTick'/&
+         &'%draw vertTick with labels'/&
          &'0 1 numVertTicks 1 sub {'/&
-         &'  vertTickSpace mul minVertTick add horiAxis2 vertTick'/&
+         &'  dup vertTickSpace mul minVertTick add horiAxis2 vertTick'/&
+         &'  newpath'/&
+         &'  dup ',G7.2,' numFrames mul numVertTicks 1 sub div mul'/&
+         &'  dup exch 10 lt {pop /temp (0) def} {100 lt {/temp (00) def} {/temp (000) def} ifelse} ifelse'/&
+         &'  dup vertTickSpace mul minVertTick add temp stringwidth pop 2 div sub'/&
+         &'  horiAxis2 pageHeight 60 div sub moveto'/&
+         &'  ',G7.2,' numFrames mul numVertTicks 1 sub div mul cvi 6 string cvs show'/&
+         &'%use below if the timestep labels have decimal part.'/&
+         &'% ',G7.2,' numFrames mul numVertTicks 1 sub div mul cvr 6 string cvs show'/&
          &'} for'/&
-         &''/&
+         &)") delta_timestep*steptime, delta_timestep*steptime,&
+         &delta_timestep*steptime
+    write(ps_output_fileid, "(&
          &'%draw horiAxis3 and arrowhead'/&
          &'newpath'/&
          &'boundLeft horiAxis3 moveto'/&
@@ -501,20 +524,20 @@ CONTAINS
     write(ps_output_fileid, "('%%%% Fortran loop starts')")
     order = 0
     write(out_fmt3, "(I2)") get_num_digits(num_frames)  
-    do i = 1, num_water
+    do i = num_water, 1, -1
        if (ANY(hydration_table(i,:))) then
           order = order + 1
           write(out_fmt2, "(I2)") get_num_digits(init_OW_index + (i-1)*3)  
           write(ps_output_fileid, "(&
                &'newpath'/&
                &'/order ', I"//TRIM(ADJUSTL(out_fmt))//", ' def'/&
-               &'waterLabelAlign boundTop recordHeight order mul sub moveto'/&
+               &'waterLabelAlign horiAxis1 recordHeight order mul add moveto'/&
                &'(',I"//TRIM(ADJUSTL(out_fmt2))//",') show'/&
                &)") order, init_OW_index + (i-1)*3
           do j = 1, num_frames
              if (hydration_table(i,j)) then
                 write(ps_output_fileid, "('minVertTick HSBoxWidth ', I"//TRIM(ADJUSTL(out_fmt3))//&
-                     &",' mul add boundTop recordHeight order mul sub HSBox')") j
+                     &",' mul add horiAxis1 recordHeight order mul add HSBox')") j
              end if
           end do
           write(ps_output_fileid,*)
@@ -549,8 +572,8 @@ CONTAINS
          &'stroke'/&
          &'grestore'//&
          &'%draw tube top and bottom line'/&
-         &'/topLimit horiAxis2 pageHeight 60 div sub def'/&
-         &'/botLimit horiAxis3 def'/&
+         &'/topLimit boundTop def'/&
+         &'/botLimit horiAxis3 vertTickLength add def'/&
          &'/graphRange topLimit botLimit sub def'/&
          &)")
     write(ps_output_fileid, "(&
@@ -595,7 +618,7 @@ CONTAINS
             &'vertAxis label stringwidth pop (0) stringwidth pop 2 div add sub tubeBotAxis pageHeight 200 div sub moveto'/&
             &'label show'/&
             &'/label (AA) def'/&
-            &'vertAxis label stringwidth pop (0) stringwidth pop 2 div add sub horiAxis2 pageHeight 60 div sub moveto'/&
+            &'vertAxis label stringwidth pop (0) stringwidth pop 2 div add sub topLimit pageHeight 60 div sub moveto'/&
             &'label show'/&
             &)")
     else
@@ -615,7 +638,7 @@ CONTAINS
              &'label show'/&
              &'/label (AA) def'/&
              &'vertAxis label stringwidth pop (0) stringwidth pop 2 div add sub &
-             &horiAxis2 pageHeight 60 div sub moveto'/&
+             &topLimit pageHeight 60 div sub moveto'/&
              &'label show'/&
              &)")
     end if
