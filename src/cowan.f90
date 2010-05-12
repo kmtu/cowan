@@ -295,7 +295,7 @@ CONTAINS
          &'/marginLeft pageWidth 15 div def'/&
          &'/marginRight marginLeft def'/&
          &'/marginTop pageHeight 30 div def'/&
-         &'/marginBot marginTop def'/&
+         &'/marginBot pageHeight 20 div def'/&
          &''/&
          &'/boundTop pageHeight marginTop sub def'/&
          &'/boundLeft marginLeft def'/&
