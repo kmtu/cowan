@@ -457,7 +457,8 @@ CONTAINS
          &'  dup vertTickSpace mul minVertTick add horiAxis1 vertTick'/&
          &'  newpath'/&
          &'  dup ',G7.2,' numFrames mul numVertTicks 1 sub div mul'/&
-         &'  dup exch 10 lt {pop /temp (0) def} {100 lt {/temp (00) def} {/temp (000) def} ifelse} ifelse'/&
+         &'  dup dup 10 lt {pop pop /temp (0) def} {100 lt {pop /temp (00) def} &
+         &{1000 lt {/temp (000) def}{/temp (0000) def} ifelse } ifelse} ifelse'/&
          &'  dup vertTickSpace mul minVertTick add temp stringwidth pop 2 div sub'/&
          &'  horiAxis1 pageHeight 60 div sub moveto'/&
          &'  ',G7.2,' numFrames mul numVertTicks 1 sub div mul cvi 6 string cvs show'/&
