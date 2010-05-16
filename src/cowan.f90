@@ -119,6 +119,7 @@ PROGRAM cowan
   num_non_ion_water_atoms = num_atoms - num_water*3 - 1
 
   ! start reading records of each timestep
+  write(*,*) "Start reading records of each timestep..."
   do i = 1, num_frames
      if (i > 1) then
         ! store init_timestep and calculate delta_timestep
@@ -686,6 +687,7 @@ CONTAINS
     INTEGER :: dummy
     total_num = 0
     dt = -1.
+    write(*,*) "Start counting number of frames..."
     do while(.true.)
        read(input_fileid, "(A)", IOSTAT=stat) line
        if (stat < 0) then       !End of file
@@ -709,7 +711,8 @@ CONTAINS
   SUBROUTINE count_num_water(total_num, init_num)
     IMPLICIT NONE
     INTEGER, INTENT(OUT) :: total_num, init_num
-    CHARACTER(LEN=128) :: line    
+    CHARACTER(LEN=128) :: line
+    write(*,*) "Start counting number of water molecules..."
     do while(.true.)
        read(input_fileid, "(A)", IOSTAT=stat) line
        if (stat < 0) then       !End of file
