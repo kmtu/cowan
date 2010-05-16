@@ -19,7 +19,7 @@ PROGRAM cowan
   INTEGER :: delta_timestep, atom_index, num_non_ion_water_atoms
   INTEGER :: init_OW_index, num_records
   REAL(KIND=8) :: hydration_radius, hydration_radius_square, dist_square
-  REAL(KIND=8) :: tube_half_length, steptime
+  REAL(KIND=8) :: tube_half_length, steptime, init_cell_vector_z, dist_temp
   REAL(KIND=8), DIMENSION(3) :: pos_ion, pos_tun1, pos_water, cell_vector
   REAL(KIND=8), DIMENSION(:), ALLOCATABLE :: pos_ion_table
   LOGICAL, DIMENSION(:,:), ALLOCATABLE :: hydration_table
@@ -121,6 +121,7 @@ PROGRAM cowan
   ! start reading records of each timestep
   do i = 1, num_frames
      if (i > 1) then
+        ! store init_timestep and calculate delta_timestep
         read(input_fileid, *, IOSTAT=stat) str_timestep, timestep
         if (i == 2) then
            if (stat /= 0 .OR. str_timestep /= "timestep") then
@@ -137,11 +138,13 @@ PROGRAM cowan
         end if
      end if
 
-     !ignore cell vectors
-     read(input_fileid, *) !cell vector
-     read(input_fileid, *) !cell vector
-     !read z vector for making postscript graph
-     read(input_fileid, *) cell_vector !cell vector
+     read(input_fileid, *) cell_vector(1) !x cell vector
+     read(input_fileid, *) cell_vector(2), cell_vector(2) !y cell vector
+     read(input_fileid, *) cell_vector(3), cell_vector(3), cell_vector(3) !z cell vector     
+
+     if (i == 1) then
+        init_cell_vector_z = cell_vector(3)
+     end if
 
      !read ion position at current timestep
      read(input_fileid, *, IOSTAT=stat) atom_name, atom_index
@@ -209,7 +212,12 @@ PROGRAM cowan
 
         dist_square = 0.0
         do k = 1, 3
-           dist_square = dist_square + (pos_water(k) - pos_ion(k))*(pos_water(k) - pos_ion(k))
+           dist_temp = ABS(pos_water(k) - pos_ion(k))
+           ! wrap the distance (apply the periodic boundary conditions)
+           if (dist_temp > (cell_vector(k)/2.)) then
+              dist_temp = cell_vector(k) - dist_temp
+           end if
+           dist_square = dist_square + dist_temp * dist_temp
         end do
         
         if (dist_square <= hydration_radius_square) then
@@ -584,7 +592,7 @@ CONTAINS
          &'/changeToGraph {'/&
          &'  dataBotLimit sub dataRange div graphRange mul botLimit add'/&
          &'} def'/&
-         &)") cell_vector(3)/2., -cell_vector(3)/2.
+         &)") init_cell_vector_z/2., -init_cell_vector_z/2.
     if (tube_half_length > 0) then
        write(ps_output_fileid, "(&
             &'/dataTubeTop ', F6.2, ' def'/&
